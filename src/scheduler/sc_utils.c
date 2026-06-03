@@ -1,7 +1,8 @@
 
 #include "scheduler/sc_utils.h"
 #include <stdlib.h> /* strtoul */
-#include <stdio.h>
+#include <string.h>
+#include <inttypes.h>
 
 extern vmem_t vmem_cmd_hash;
 extern vmem_t vmem_cmd_store;
