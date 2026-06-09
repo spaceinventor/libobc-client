@@ -4,10 +4,11 @@
 #include <string.h>
 #include <inttypes.h>
 
-extern vmem_t vmem_cmd_hash;
-extern vmem_t vmem_cmd_store;
-extern vmem_t vmem_sch_hash;
-extern vmem_t vmem_sch_store;
+vmem_t vmem_cmd_hash __attribute__((weak));
+vmem_t vmem_cmd_hash __attribute__((weak));
+vmem_t vmem_cmd_store __attribute__((weak));
+vmem_t vmem_sch_hash __attribute__((weak));
+vmem_t vmem_sch_store __attribute__((weak));
 
 param_hash_t sc_calc_cmd_hash(sc_queue_t* queue, char* buffer) {
 
