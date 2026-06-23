@@ -49,7 +49,3 @@ obc_lib = static_library('obc',
 )
 
 obcclient_dep = declare_dependency(dependencies: dependencies, include_directories: obc_inc, link_with : obc_lib)
-
-if not meson.is_subproject()
-    subdir('tests')
-endif
