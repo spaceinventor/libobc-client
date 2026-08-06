@@ -1,9 +1,5 @@
 #include "sc_client_internal.h"
-<<<<<<< HEAD
-#include "scheduler/sc_client.h"
-=======
 #include <scheduler/sc_client.h>
->>>>>>> 1c7d094 (Remove inclusion of obsolete "sc_utils.h")
 #include <param/param_server.h>
 #include <csp/csp.h>
 #include <time.h>

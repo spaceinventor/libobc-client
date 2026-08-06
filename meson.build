@@ -11,7 +11,6 @@ dependencies = []
 includes = include_directories('include')
 dependencies += [param_dep, csp_dep]
 
-# sources += files(['src/scheduler/sc_utils.c',])
 sources += files(['src/scheduler/sc_client.c',])
 
 obc_lib = static_library('obc-client',
