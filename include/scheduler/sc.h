@@ -152,8 +152,6 @@ typedef enum {
     SCHEDULE_SHOW_RESPONSE_V2 = 63,
 } sc_packet_type_e;
 
-void sc_server_init();
-
 #ifdef __cplusplus
 }
 #endif

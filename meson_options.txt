@@ -1,4 +1,0 @@
-option('parser', type: 'boolean', value: false, description: 'Build lua parser, lexical analyser and code generator')
-option('freertos', type: 'boolean', value: true, description: 'Include freertos tasks and bindings')
-option('lua_tasks', type: 'integer', value: 4, description: 'Number of LUA tasks')
-option('scheduler_client', type: 'boolean', value: false, description: 'Include Schedule and Command client functionality')

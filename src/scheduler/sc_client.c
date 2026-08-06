@@ -1,6 +1,5 @@
 #include "sc_client_internal.h"
 #include "scheduler/sc_client.h"
-#include "scheduler/sc_utils.h"
 #include <param/param_server.h>
 #include <csp/csp.h>
 #include <time.h>
@@ -11,7 +10,7 @@
 typedef void (*transaction_callback_f)(csp_packet_t *response, int verbose, int version);
 
 int sc_transaction(csp_packet_t *packet, int host, int timeout, transaction_callback_f callback, int verbose, int version, void * context) {
-
+    (void)context;
     /* Parameters can be setup with a special nodeid, which caused all transaction to be ignored
        and return failure immediately */
     if (host == PARAM_REMOTE_NODE_IGNORE) {
@@ -57,7 +56,8 @@ int sc_transaction(csp_packet_t *packet, int host, int timeout, transaction_call
 
 on_cmd_upload_cb_t on_cmd_upload_cb = 0;
 void sc_cmd_upload_client_cb(csp_packet_t *response, int verbose, int version) {
-
+    (void)verbose;
+    (void)version;
     uint32_t unpacked_len = 2;
     while (unpacked_len < response->length) {
         param_sc_rsp_t* rsp_element = (param_sc_rsp_t*)&response->data[unpacked_len];
@@ -71,7 +71,8 @@ void sc_cmd_upload_client_cb(csp_packet_t *response, int verbose, int version) {
 
 on_cmd_execute_cb_t on_cmd_execute_cb = 0;
 void sc_cmd_execute_client_cb(csp_packet_t *response, int verbose, int version) {
-
+    (void)verbose;
+    (void)version;
     uint32_t unpacked_len = 2;
     while (unpacked_len < response->length) {
         param_sc_rsp_t* rsp_element = (param_sc_rsp_t*)&response->data[unpacked_len];
@@ -146,7 +147,8 @@ int sc_cmd_upload_client(param_queue_t* queue, uint16_t server, unsigned int tim
 on_cmd_list_element_cb_t on_cmd_list_element_cb = 0;
 
 void sc_cmd_list_client_cb(csp_packet_t *response, int verbose, int version) {
-
+    (void)verbose;
+    (void)version;
     uint32_t unpacked_len = 2;
     if (unpacked_len < response->length) {
         while (unpacked_len < response->length) {
@@ -190,7 +192,8 @@ int sc_cmd_list_client(uint16_t server, unsigned int timeout) {
 on_cmd_download_cb_t on_cmd_download_cb = 0;
 
 void sc_cmd_download_cb(csp_packet_t *response, int verbose, int version) {
-
+    (void)verbose;
+    (void)version;
     uint32_t unpacked_len = 2;
     while (unpacked_len < response->length) {
         param_cmd_download_t* rsp_element = (param_cmd_download_t*)&response->data[unpacked_len];
@@ -232,6 +235,8 @@ int sc_cmd_download_client(param_hash_t hash, uint16_t server, unsigned int time
 on_cmd_rm_cb_t on_cmd_rm_cb = 0;
 
 void sc_cmd_rm_cb(csp_packet_t *response, int verbose, int version) {
+    (void)verbose;
+    (void)version;    
     uint32_t unpacked_len = 2;
     while (unpacked_len < response->length) {
         param_sc_rsp_t* rsp_element = (param_sc_rsp_t*)&response->data[unpacked_len];
@@ -272,6 +277,8 @@ int sc_cmd_remove_client(param_hash_t hash, uint16_t server, unsigned int timeou
 on_sch_push_cb_t on_sch_push_cb = 0;
 
 void sc_sch_push_client_cb(csp_packet_t *response, int verbose, int version) {
+    (void)verbose;
+    (void)version;
     uint32_t unpacked_len = 2;
 
     while (unpacked_len < response->length) {
@@ -322,7 +329,8 @@ int sc_sch_push_client(param_queue_t* queue, uint32_t time, uint32_t latency_buf
 
 on_sch_list_cb_t on_sch_list_cb = 0;
 void sc_sch_list_client_cb(csp_packet_t *response, int verbose, int version) {
-
+    (void)verbose;
+    (void)version;
     uint32_t unpacked_len = 2;
     while (unpacked_len < response->length) {
 
@@ -372,7 +380,8 @@ int sc_sch_list_client(uint16_t server, unsigned int timeout) {
 on_sch_show_cb_t on_sch_show_cb = 0;
 
 void sc_sch_show_client_cb(csp_packet_t *response, int verbose, int version) {
-
+    (void)verbose;
+    (void)version;
     uint32_t unpacked_len = 2;
 
     while (unpacked_len < response->length) {
@@ -423,6 +432,8 @@ int sc_sch_show_client(param_hash_t hash, uint16_t server, unsigned int timeout)
 on_sch_cmd_cb_t on_sch_cmd_cb = 0;
 
 void sc_sch_cmd_client_cb(csp_packet_t *response, int verbose, int version) {
+    (void)verbose;
+    (void)version;
     uint32_t unpacked_len = 2;
 
     while (unpacked_len < response->length) {
@@ -467,6 +478,8 @@ int sc_sch_cmd_client(param_hash_t cmd_hash, uint32_t time, uint32_t latency_buf
 on_sch_rm_cb_t on_sch_rm_cb = 0;
 
 void sc_sch_rm_client_cb(csp_packet_t *response, int verbose, int version) {
+    (void)verbose;
+    (void)version;
     uint32_t unpacked_len = 2;
 
     while (unpacked_len < response->length) {
@@ -504,4 +517,20 @@ int sc_sch_remove_client(param_hash_t hash, uint16_t server, unsigned int timeou
     int result = sc_transaction(packet, server, timeout, sc_sch_rm_client_cb, 0, 2, NULL);
 
     return result;
+}
+
+char* sch_str_status(sch_status_t status) {
+
+    switch (status) {
+        case SCH_STATUS_SCHEDULED: return "Scheduled";
+        case SCH_STATUS_COMPLETED: return "Completed";
+        case SCH_STATUS_FAILED: return "Failed";
+        case SCH_STATUS_OVERDUE: return "Overdue";
+        case SCH_STATUS_CORRUPTED: return "Corrupted";
+        case SCH_STATUS_MISSING_CMD: return "Missing CMD";
+        case SCH_STATUS_CORRUPTED_CMD: return "Corrupted CMD";
+        case SCH_STATUS_EXISTS: return "CMD exists";
+        case SCH_STATUS_FULL: return "Queue is full";
+        default: return "Unknown";
+    }
 }

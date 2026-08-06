@@ -192,6 +192,9 @@ int sc_sch_cmd_client(param_hash_t cmd_hash, uint32_t time,
  * @return 0 if success, -1 if the server transaction failed, -2 if the CSP request could not be allocated, 
  */
 int sc_sch_list_client(uint16_t server, unsigned int timeout);
+
+char* sch_str_status(sch_status_t status);
+
 #ifdef __cplusplus
 }
 #endif
