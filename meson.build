@@ -11,12 +11,20 @@ dependencies = []
 includes = include_directories('include')
 dependencies += [param_dep, csp_dep]
 
-sources += files(['src/scheduler/sc_client.c',])
+install_subdir('include', install_dir : '.', install_tag: 'devel')
 
-obc_lib = static_library('obc-client',
+obc_lib = library('obc-client',
     sources: sources,
     dependencies : dependencies,
     include_directories : include_directories('include', '.'),
+    install: true,
+    soversion: meson.project_version()
 )
 
+pkg = import('pkgconfig')
+pkg.generate(
+	obc_lib,
+	subdirs: ['.'],
+    requires: ['param', 'csp']
+)
 obc_client_dep = declare_dependency(dependencies: dependencies, include_directories: includes, link_with : obc_lib)
