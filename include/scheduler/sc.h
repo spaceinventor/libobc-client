@@ -128,6 +128,24 @@ typedef struct {
     char param_buffer[];
 } __attribute__((__packed__)) param_sch_show_t;
 
+/* Delete completed schedule elements older than a given time
+   and commands not referenced by any schedule element
+   SCHEDULE_CLEANUP_REQUEST_V2
+    */
+typedef struct {
+    int32_t preserve_from;
+    uint8_t remove_failed;
+    uint8_t remove_unused_commands;
+} __attribute__((__packed__)) param_sch_cleanup_t;
+
+/* Response to a schedule cleanup request
+   SCHEDULE_CLEANUP_RESPONSE_V2
+   */
+typedef struct {
+    uint32_t num_cmd;
+    uint32_t num_sch;
+} __attribute__((__packed__)) param_sch_status_t;
+
 typedef enum {
     COMMAND_UPLOAD_REQUEST_V2 = 40,
     COMMAND_UPLOAD_RESPONSE_V2 = 41,
@@ -150,7 +168,11 @@ typedef enum {
     SCHEDULE_LIST_RESPONSE_V2 = 61,
     SCHEDULE_SHOW_REQUEST_V2 = 62,
     SCHEDULE_SHOW_RESPONSE_V2 = 63,
+    SCHEDULE_CLEANUP_REQUEST_V2 = 64,
+    SCHEDULE_CLEANUP_RESPONSE_V2 = 65,
 } sc_packet_type_e;
+
+void sc_server_init();
 
 #ifdef __cplusplus
 }

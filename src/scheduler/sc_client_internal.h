@@ -21,6 +21,8 @@ csp_packet_t * sc_create_sch_show_req(param_hash_t hash);
 csp_packet_t * sc_create_sch_cmd_req(param_hash_t cmd_hash, uint32_t time,
                                      uint32_t latency_buffer_s);
 csp_packet_t *sc_create_sch_list_req();                                     
+csp_packet_t *sc_create_sch_cleanup_req(uint32_t olderthan, uint32_t remove_commands, uint32_t remove_failed, uint16_t server, unsigned int timeout);
+
 void sc_cmd_list_client_cb(csp_packet_t * response, int verbose, int version);
 void sc_cmd_upload_client_cb(csp_packet_t * response, int verbose, int version);
 void sc_cmd_download_cb(csp_packet_t * response, int verbose, int version);
@@ -31,6 +33,7 @@ void sc_sch_cmd_client_cb(csp_packet_t * response, int verbose, int version);
 void sc_sch_list_client_cb(csp_packet_t * response, int verbose, int version);
 void sc_sch_rm_client_cb(csp_packet_t * response, int verbose, int version);
 void sc_sch_push_client_cb(csp_packet_t * response, int verbose, int version);
+void sc_sch_cleanup_client_cb(csp_packet_t * response, int verbose, int version);
 
 #ifdef __cplusplus
 }

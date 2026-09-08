@@ -79,6 +79,13 @@ typedef void (*on_sch_rm_cb_t)(param_sc_rsp_t * rsp_element);
  */
 extern on_sch_rm_cb_t on_sch_rm_cb;
 
+typedef void (*on_sch_cleanup_cb_t)(param_sch_status_t * rsp_element);
+/**
+ * @brief Set this to a function that will be called when a "schedule cleanup" request has completed
+ * @attention "completed" does NOT NECESSARILY mean successful, check the "result" field of the response
+ */
+extern on_sch_cleanup_cb_t on_sch_cleanup_cb;
+
 /* Command related APIs */
 
 /**
@@ -194,6 +201,17 @@ int sc_sch_cmd_client(param_hash_t cmd_hash, uint32_t time,
 int sc_sch_list_client(uint16_t server, unsigned int timeout);
 
 char* sch_str_status(sch_status_t status);
+
+/**
+ * @brief Clean up old schedules
+ * @param olderthan Remove schedules older than this many seconds
+ * @param remove_commands Remove commands not used by any schedule (boolean)
+ * @param remove_failed Remove schedules that have failed execution (boolean)
+ * @param server OBC node ID
+ * @param timeout Timeout in ms
+ * @return 0 if success, -1 if the server transaction failed, -2 if the CSP request could not be allocated, 
+ */
+int sc_sch_cleanup_client(uint32_t olderthan, uint32_t remove_commands, uint32_t remove_failed, uint16_t server, unsigned int timeout);
 
 #ifdef __cplusplus
 }
