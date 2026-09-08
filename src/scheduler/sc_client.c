@@ -519,6 +519,57 @@ int sc_sch_remove_client(param_hash_t hash, uint16_t server, unsigned int timeou
     return result;
 }
 
+on_sch_cleanup_cb_t on_sch_cleanup_cb = 0;
+
+void sc_sch_cleanup_client_cb(csp_packet_t *response, int verbose, int version) {
+    (void)verbose;
+    (void)version;
+    uint32_t unpacked_len = 2;
+
+    param_sch_status_t * rsp_element = (param_sch_status_t *)&response->data[unpacked_len];
+    rsp_element->num_cmd = be32toh(rsp_element->num_cmd);
+    rsp_element->num_sch = be32toh(rsp_element->num_sch);
+    unpacked_len += sizeof(*rsp_element);
+
+    if(on_sch_cleanup_cb) {
+        on_sch_cleanup_cb(rsp_element);
+    }
+}
+
+csp_packet_t *sc_create_sch_cleanup_req(uint32_t olderthan, uint32_t remove_commands, uint32_t remove_failed, uint16_t server, unsigned int timeout) {
+    (void)server;
+    (void)timeout;
+
+    csp_packet_t * packet = csp_buffer_get(PARAM_SERVER_MTU);
+
+    if (packet == NULL)
+        return NULL;
+
+    packet->data[0] = SCHEDULE_CLEANUP_REQUEST_V2;
+    packet->data[1] = PARAM_FLAG_END;
+    packet->length = 2;
+
+    param_sch_cleanup_t* cmd = (param_sch_cleanup_t*)&packet->data[2];
+    cmd->preserve_from = -htobe32(olderthan);
+    cmd->remove_unused_commands = remove_commands;
+    cmd->remove_failed = remove_failed;
+
+    packet->length += sizeof(*cmd);
+
+    return packet;
+}
+
+int sc_sch_cleanup_client(uint32_t olderthan, uint32_t remove_commands, uint32_t remove_failed, uint16_t server, unsigned int timeout) {
+
+    csp_packet_t * packet = sc_create_sch_cleanup_req(olderthan, remove_commands, remove_failed, server, timeout);
+    if (packet == NULL)
+        return -2;
+
+    int result = sc_transaction(packet, server, timeout, sc_sch_cleanup_client_cb, 0, 2, NULL);
+
+    return result;
+}
+
 char* sch_str_status(sch_status_t status) {
 
     switch (status) {
