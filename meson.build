@@ -1,4 +1,4 @@
-project('obc-client', ['c'], version: '0.0.1',
+project('obc-client', ['c'], version: '0.0.2',
     subproject_dir: 'lib',
     default_options : [
         'warning_level=2',
@@ -12,6 +12,7 @@ includes = include_directories('include')
 dependencies += [param_dep, csp_dep]
 
 sources += files([
+    'src/hk/hk_client.c',
     'src/scheduler/sc_client.c',
     ]
 )
