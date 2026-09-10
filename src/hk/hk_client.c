@@ -1,5 +1,7 @@
 #include "mpack/mpack.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include<inttypes.h>
 #include <sys/time.h>
 #include <csp/csp.h>
 #include <hk/hk.h>
@@ -22,14 +24,6 @@ typedef struct timesync_nodes_s {
 	uint16_t paramid[MAX_HKS];
 } timesync_nodes_t;
 static timesync_nodes_t timesync_nodes = {0};
-
-typedef struct {
-    uint32_t timestamp; /**< Timestamp for newest data to receive */
-    uint16_t period; /**< Time between each log */
-    uint8_t prios : 3; /**< One bit per priority, i.e. 0b101 for prio 1 and 3 */
-    uint8_t throughput : 5; /**< Percentage increase in download throughput of timestamps, leave at 0 for full throughput */
-    uint8_t num_timestamps; /**< Number of timestamps to retrieve */
-} __attribute__((__packed__)) hk_retrievehdr_t;
 
 static uint8_t get_throughput_index(double rate);
 
@@ -59,7 +53,7 @@ void hk_set_epoch(time_t epoch, uint16_t node, bool auto_sync) {
 	if (epoch > current_epoch || epoch < 1577836800) {
 		char current_epoch_str[32];
 		strftime(current_epoch_str, sizeof(current_epoch_str), "%Y-%m-%d %H:%M:%S", gmtime(&epoch));
-		printf("HK: Illegal EPOCH %lu (%s) received\n", current_epoch, current_epoch_str);
+		printf("HK: Illegal EPOCH %"PRIu64" (%s) received\n", (uint64_t)current_epoch, current_epoch_str);
 		return;
 	}
 
@@ -72,15 +66,15 @@ void hk_set_epoch(time_t epoch, uint16_t node, bool auto_sync) {
 				strftime(time, sizeof(time), "%Y-%m-%d %H:%M:%S", gmtime(&epoch));
 				char time_current[32];
 				strftime(time_current, sizeof(time_current), "%Y-%m-%d %H:%M:%S", gmtime(&hks.local_epoch[i]));
-				printf("HK: Skipping possible invalid EPOCH %s, current EPOCH for HK node %u is %s (%ld)\n", time, node, time_current, hks.local_epoch[i]);
+				printf("HK: Skipping possible invalid EPOCH %s, current EPOCH for HK node %u is %s (%"PRIu64")\n", time, node, time_current, (uint64_t)hks.local_epoch[i]);
 				return;
 			}
 
-			if (labs(hks.local_epoch[i] - epoch) > 1 || !auto_sync) {
+			if (llabs(hks.local_epoch[i] - epoch) > 1 || !auto_sync) {
 				/* get unix time to string time */
 				char time[32];
 				strftime(time, sizeof(time), "%Y-%m-%d %H:%M:%S", gmtime(&epoch));
-				printf("HK: Updating HK node %u EPOCH by %ld sec to %s (%ld)\n", node, hks.local_epoch[i] - epoch, time, epoch);
+				printf("HK: Updating HK node %u EPOCH by %"PRIu64" sec to %s (%"PRIu64")\n", node, (uint64_t)(hks.local_epoch[i] - epoch), time, (uint64_t)epoch);
 			}
 
 			hks.local_epoch[i] = epoch;
@@ -98,7 +92,7 @@ void hk_set_epoch(time_t epoch, uint16_t node, bool auto_sync) {
 
 	char new_epoch_str[32];
 	strftime(new_epoch_str, sizeof(new_epoch_str), "%Y-%m-%d %H:%M:%S", gmtime(&epoch));
-	printf("HK: Setting new hk node %u EPOCH to %s (%ld)\n", node, new_epoch_str, epoch);
+	printf("HK: Setting new hk node %u EPOCH to %s (%"PRIu64")\n", node, new_epoch_str, (uint64_t)epoch);
 }
 
 bool hk_get_epoch(time_t * local_epoch, uint16_t node) {
