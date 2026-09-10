@@ -1,4 +1,4 @@
-project('obc-client', ['c'], version: '0.0.2',
+project('obc-client', ['c'], version: '0.0.3',
     subproject_dir: 'lib',
     default_options : [
         'warning_level=2',
