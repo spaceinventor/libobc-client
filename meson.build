@@ -3,8 +3,14 @@ project('obc-client', ['c'], version: '0.0.2',
     default_options : [
         'warning_level=2',
     ])
-param_dep = dependency('param', fallback:['param', 'param_dep'])
-csp_dep = dependency('csp', fallback:['csp', 'csp_dep'])
+param_dep = dependency('param', fallback:['param', 'param_dep']).partial_dependency(
+    links: false,
+    includes: true
+)
+csp_dep = dependency('csp', fallback:['csp', 'csp_dep']).partial_dependency(
+    links: false,
+    includes: true
+)
 
 sources = []
 dependencies = []
