@@ -550,7 +550,7 @@ csp_packet_t *sc_create_sch_cleanup_req(uint32_t olderthan, uint32_t remove_comm
     packet->length = 2;
 
     param_sch_cleanup_t* cmd = (param_sch_cleanup_t*)&packet->data[2];
-    cmd->preserve_from = -htobe32(olderthan);
+    cmd->preserve_from = -(int32_t)olderthan; /* Intentionally little-endian */
     cmd->remove_unused_commands = remove_commands;
     cmd->remove_failed = remove_failed;
 
